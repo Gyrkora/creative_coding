@@ -7,9 +7,12 @@ import {
     setCurrentPaletteType, setCurrentShapeType, setHideButtonTimeout,
     // Importaciones de elementos DOM directamente desde config.js
     menuButton, closeButton, toggleSnakeModeBtn, toggleCollisionsBtn,
+
     colorPaletteBtns, speedRange, speedValueSpan, addBallBtn,
     resetBallsBtn, toggleShapeBtn,
-    deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn
+
+    deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn, INITIAL_NUMBER_OF_BALLS,
+
 } from './config.js';
 import { addBall, initializeBalls, handleWindowResize } from './ball-manager.js';
 import { getColorForPalette } from './utils.js';
@@ -79,15 +82,18 @@ canvas.addEventListener('click', (event) => {
     const clickY = event.clientY - rect.top;
 
     let clickedBall = null;
+
     for (let i = 0; i < balls.length; i++) {
         const ball = balls[i];
         const distance = Math.sqrt((clickX - ball.x) ** 2 + (clickY - ball.y) ** 2);
 
         if (distance < ball.radius) {
             clickedBall = ball;
+
             break;
         }
     }
+
 
     if (clickedBall) {
         if (pendingBallAction) {
@@ -101,6 +107,7 @@ canvas.addEventListener('click', (event) => {
         } else {
             clickedBall.sizeState = 'shrinking';
         }
+
     }
 });
 
@@ -112,17 +119,23 @@ menuButton.addEventListener('click', () => {
     showButton();
     clearTimeout(hideButtonTimeout);
     setHideButtonTimeout(null); // Detener el temporizador mientras el modal está abierto
+    hideBallOptions();
 });
 
 closeButton.addEventListener('click', () => {
     customizationModal.classList.remove('open');
     showButtonAndResetTimer();
+    hideBallOptions();
 });
 
 window.addEventListener('click', (event) => {
     if (event.target === customizationModal) {
         customizationModal.classList.remove('open');
         showButtonAndResetTimer();
+    }
+
+    if (!ballOptionsDiv.contains(event.target) && event.target !== canvas) {
+        hideBallOptions();
     }
 });
 
@@ -185,6 +198,7 @@ toggleShapeBtn.addEventListener('click', () => {
 });
 
 deleteBallBtn.addEventListener('click', () => {
+
     pendingBallAction = 'delete';
     customizationModal.classList.remove('open');
     showButtonAndResetTimer();

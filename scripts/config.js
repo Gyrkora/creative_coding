@@ -21,6 +21,11 @@ export const growBallBtn = document.getElementById('growBallBtn');
 export const speedUpBallBtn = document.getElementById('speedUpBallBtn');
 export const slowDownBallBtn = document.getElementById('slowDownBallBtn');
 
+export const deleteBallBtn = document.getElementById('deleteBallBtn');
+export const growBallBtn = document.getElementById('growBallBtn');
+export const speedUpBallBtn = document.getElementById('speedUpBallBtn');
+export const slowDownBallBtn = document.getElementById('slowDownBallBtn');
+
 // Ajustar canvas size to window
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
