@@ -10,6 +10,7 @@ import {
 
     colorPaletteBtns, speedRange, speedValueSpan, addBallBtn,
     resetBallsBtn, toggleShapeBtn,
+
     deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn, INITIAL_NUMBER_OF_BALLS,
 
 } from './config.js';
@@ -88,7 +89,6 @@ canvas.addEventListener('click', (event) => {
 
         if (distance < ball.radius) {
             clickedBall = ball;
-
 
             break;
         }
@@ -223,5 +223,3 @@ slowDownBallBtn.addEventListener('click', () => {
 });
 
 window.addEventListener("resize", handleWindowResize);
-
-
