@@ -9,17 +9,12 @@ import {
     menuButton, closeButton, toggleSnakeModeBtn, toggleCollisionsBtn,
     colorPaletteBtns, speedRange, speedValueSpan, addBallBtn,
     resetBallsBtn, toggleShapeBtn,
-    ballOptionsDiv, deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn
+    deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn
 } from './config.js';
 import { addBall, initializeBalls, handleWindowResize } from './ball-manager.js';
 import { getColorForPalette } from './utils.js';
 
-let selectedBall = null;
-
-function hideBallOptions() {
-    ballOptionsDiv.style.display = 'none';
-    selectedBall = null;
-}
+let pendingBallAction = null;
 
 
 // --- Menu Button Show/Hide Logic ---
@@ -44,6 +39,32 @@ function applyColorPalette(paletteType) {
     });
 }
 
+function applyActionToBall(ball) {
+    switch (pendingBallAction) {
+        case 'delete':
+            const index = balls.indexOf(ball);
+            if (index !== -1) {
+                balls.splice(index, 1);
+            }
+            break;
+        case 'grow':
+            ball.sizeState = 'growing';
+            break;
+        case 'faster':
+            ball.baseDx *= 1.5;
+            ball.baseDy *= 1.5;
+            ball.dx = ball.baseDx * currentSpeedMultiplier;
+            ball.dy = ball.baseDy * currentSpeedMultiplier;
+            break;
+        case 'slower':
+            ball.baseDx *= 0.75;
+            ball.baseDy *= 0.75;
+            ball.dx = ball.baseDx * currentSpeedMultiplier;
+            ball.dy = ball.baseDy * currentSpeedMultiplier;
+            break;
+    }
+}
+
 
 // --- Event Listeners ---
 
@@ -57,23 +78,28 @@ canvas.addEventListener('click', (event) => {
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
 
-    selectedBall = null;
+    let clickedBall = null;
     for (let i = 0; i < balls.length; i++) {
         const ball = balls[i];
         const distance = Math.sqrt((clickX - ball.x) ** 2 + (clickY - ball.y) ** 2);
 
         if (distance < ball.radius) {
-            selectedBall = ball;
+            clickedBall = ball;
             break;
         }
     }
 
-    if (selectedBall) {
-        ballOptionsDiv.style.left = `${event.clientX}px`;
-        ballOptionsDiv.style.top = `${event.clientY}px`;
-        ballOptionsDiv.style.display = 'flex';
-    } else {
-        hideBallOptions();
+    if (clickedBall) {
+        if (pendingBallAction) {
+            applyActionToBall(clickedBall);
+            pendingBallAction = null;
+        } else {
+            if (clickedBall.sizeState === 'normal' && clickedBall.radius === clickedBall.minRadius) {
+                clickedBall.sizeState = 'growing';
+            } else {
+                clickedBall.sizeState = 'shrinking';
+            }
+        }
     }
 });
 
@@ -85,23 +111,17 @@ menuButton.addEventListener('click', () => {
     showButton();
     clearTimeout(hideButtonTimeout);
     setHideButtonTimeout(null); // Detener el temporizador mientras el modal está abierto
-    hideBallOptions();
 });
 
 closeButton.addEventListener('click', () => {
     customizationModal.classList.remove('open');
     showButtonAndResetTimer();
-    hideBallOptions();
 });
 
 window.addEventListener('click', (event) => {
     if (event.target === customizationModal) {
         customizationModal.classList.remove('open');
         showButtonAndResetTimer();
-    }
-
-    if (!ballOptionsDiv.contains(event.target) && event.target !== canvas) {
-        hideBallOptions();
     }
 });
 
@@ -164,40 +184,27 @@ toggleShapeBtn.addEventListener('click', () => {
 });
 
 deleteBallBtn.addEventListener('click', () => {
-    if (selectedBall) {
-        const index = balls.indexOf(selectedBall);
-        if (index !== -1) {
-            balls.splice(index, 1);
-        }
-    }
-    hideBallOptions();
+    pendingBallAction = 'delete';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
 });
 
 growBallBtn.addEventListener('click', () => {
-    if (selectedBall) {
-        selectedBall.sizeState = 'growing';
-    }
-    hideBallOptions();
+    pendingBallAction = 'grow';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
 });
 
 speedUpBallBtn.addEventListener('click', () => {
-    if (selectedBall) {
-        selectedBall.baseDx *= 1.5;
-        selectedBall.baseDy *= 1.5;
-        selectedBall.dx = selectedBall.baseDx * currentSpeedMultiplier;
-        selectedBall.dy = selectedBall.baseDy * currentSpeedMultiplier;
-    }
-    hideBallOptions();
+    pendingBallAction = 'faster';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
 });
 
 slowDownBallBtn.addEventListener('click', () => {
-    if (selectedBall) {
-        selectedBall.baseDx *= 0.75;
-        selectedBall.baseDy *= 0.75;
-        selectedBall.dx = selectedBall.baseDx * currentSpeedMultiplier;
-        selectedBall.dy = selectedBall.baseDy * currentSpeedMultiplier;
-    }
-    hideBallOptions();
+    pendingBallAction = 'slower';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
 });
 
 window.addEventListener("resize", handleWindowResize);
