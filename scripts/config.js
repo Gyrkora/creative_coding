@@ -16,7 +16,7 @@ export const speedValueSpan = document.getElementById('speedValue');
 export const addBallBtn = document.getElementById('addBallBtn');
 export const resetBallsBtn = document.getElementById('resetBallsBtn');
 export const toggleShapeBtn = document.getElementById('toggleShapeBtn');
-export const ballOptionsDiv = document.getElementById('ballOptions');
+
 export const deleteBallBtn = document.getElementById('deleteBallBtn');
 export const growBallBtn = document.getElementById('growBallBtn');
 export const speedUpBallBtn = document.getElementById('speedUpBallBtn');

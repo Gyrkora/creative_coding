@@ -39,31 +39,7 @@ canvas {
     pointer-events: none;
 }
 
-/* Opciones cuando se toca una pelota */
-.ball-options {
-    position: absolute;
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #888;
-    border-radius: 8px;
-    padding: 8px;
-    z-index: 15;
-}
 
-.ball-options button {
-    padding: 6px 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-}
-
-.ball-options button:hover {
-    background-color: #0056b3;
-}
 
 /* --- Estilos del Modal --- */
 .modal {
