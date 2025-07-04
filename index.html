@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pelotas Dinámicas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+
+    <button id="menuButton">Menú</button>
+
+    <div id="customizationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Opciones de Personalización</h2>
+        <div class="modal-options">
+          <button id="toggleSnakeModeBtn" class="modal-option-btn">
+            Transformar en Serpiente / Normal
+          </button>
+          <button id="toggleCollisionsBtn" class="modal-option-btn">
+            Colisiones entre Pelotas: Desactivadas
+          </button>
+          <div class="option-group">
+            <h3>Paleta de Colores:</h3>
+            <button
+              id="paletteBtn1"
+              class="modal-option-btn color-palette-btn"
+              data-palette="random"
+            >
+              Aleatorio
+            </button>
+            <button
+              id="paletteBtn2"
+              class="modal-option-btn color-palette-btn"
+              data-palette="pastel"
+            >
+              Pastel
+            </button>
+            <button
+              id="paletteBtn3"
+              class="modal-option-btn color-palette-btn"
+              data-palette="grayscale"
+            >
+              Escala de Grises
+            </button>
+          </div>
+          <div class="option-group">
+            <h3>Velocidad:</h3>
+            <input type="range" id="speedRange" min="1" max="10" value="4" />
+            <span id="speedValue">4</span>
+          </div>
+          <div class="option-group">
+            <h3>Gestionar Pelotas:</h3>
+            <button id="addBallBtn" class="modal-option-btn">
+              Añadir Pelotita
+            </button>
+            <button id="resetBallsBtn" class="modal-option-btn">
+              Reiniciar Pelotas
+            </button>
+            <button id="toggleShapeBtn" class="modal-option-btn">
+              Alternar Forma
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="scripts/main.js"></script>
+  </body>
+</html>
