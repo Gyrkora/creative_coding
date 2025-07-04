@@ -7,7 +7,8 @@ import {
     setCurrentPaletteType, setCurrentShapeType, setHideButtonTimeout,
     // Importaciones de elementos DOM directamente desde config.js
     menuButton, closeButton, toggleSnakeModeBtn, toggleCollisionsBtn,
-    colorPaletteBtns, speedRange, speedValueSpan, addBallBtn,
+    colorPaletteBtns, speedRange, speedValueSpan, addBallBtn, INITIAL_NUMBER_OF_BALLS,
+
     resetBallsBtn, toggleShapeBtn,
     ballOptionsDiv, deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn
 } from './config.js';
