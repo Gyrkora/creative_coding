@@ -39,6 +39,7 @@ canvas {
     pointer-events: none;
 }
 
+
 /* --- Estilos del Modal --- */
 .modal {
     display: none;

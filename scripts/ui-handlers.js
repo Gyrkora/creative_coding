@@ -8,10 +8,13 @@ import {
     // Importaciones de elementos DOM directamente desde config.js
     menuButton, closeButton, toggleSnakeModeBtn, toggleCollisionsBtn,
     colorPaletteBtns, speedRange, speedValueSpan, addBallBtn,
-    resetBallsBtn, toggleShapeBtn
+    resetBallsBtn, toggleShapeBtn,
+    deleteBallBtn, growBallBtn, speedUpBallBtn, slowDownBallBtn
 } from './config.js';
 import { addBall, initializeBalls, handleWindowResize } from './ball-manager.js';
 import { getColorForPalette } from './utils.js';
+
+let pendingBallAction = null;
 
 
 // --- Menu Button Show/Hide Logic ---
@@ -36,6 +39,32 @@ function applyColorPalette(paletteType) {
     });
 }
 
+function applyActionToBall(ball) {
+    switch (pendingBallAction) {
+        case 'delete':
+            const index = balls.indexOf(ball);
+            if (index !== -1) {
+                balls.splice(index, 1);
+            }
+            break;
+        case 'grow':
+            ball.sizeState = 'growing';
+            break;
+        case 'faster':
+            ball.baseDx *= 1.5;
+            ball.baseDy *= 1.5;
+            ball.dx = ball.baseDx * currentSpeedMultiplier;
+            ball.dy = ball.baseDy * currentSpeedMultiplier;
+            break;
+        case 'slower':
+            ball.baseDx *= 0.75;
+            ball.baseDy *= 0.75;
+            ball.dx = ball.baseDx * currentSpeedMultiplier;
+            ball.dy = ball.baseDy * currentSpeedMultiplier;
+            break;
+    }
+}
+
 
 // --- Event Listeners ---
 
@@ -49,17 +78,28 @@ canvas.addEventListener('click', (event) => {
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
 
+    let clickedBall = null;
     for (let i = 0; i < balls.length; i++) {
         const ball = balls[i];
         const distance = Math.sqrt((clickX - ball.x) ** 2 + (clickY - ball.y) ** 2);
 
         if (distance < ball.radius) {
-            if (ball.sizeState === 'normal' && ball.radius === ball.minRadius) {
-                ball.sizeState = 'growing';
-            } else {
-                ball.sizeState = 'shrinking';
-            }
+            clickedBall = ball;
             break;
+        }
+    }
+
+    if (clickedBall) {
+        if (pendingBallAction) {
+            applyActionToBall(clickedBall);
+            // keep action active for subsequent clicks
+            return;
+        }
+
+        if (clickedBall.sizeState === 'normal' && clickedBall.radius === clickedBall.minRadius) {
+            clickedBall.sizeState = 'growing';
+        } else {
+            clickedBall.sizeState = 'shrinking';
         }
     }
 });
@@ -140,6 +180,30 @@ toggleShapeBtn.addEventListener('click', () => {
     balls.forEach(ball => {
         ball.shape = currentShapeType;
     });
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
+});
+
+deleteBallBtn.addEventListener('click', () => {
+    pendingBallAction = 'delete';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
+});
+
+growBallBtn.addEventListener('click', () => {
+    pendingBallAction = 'grow';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
+});
+
+speedUpBallBtn.addEventListener('click', () => {
+    pendingBallAction = 'faster';
+    customizationModal.classList.remove('open');
+    showButtonAndResetTimer();
+});
+
+slowDownBallBtn.addEventListener('click', () => {
+    pendingBallAction = 'slower';
     customizationModal.classList.remove('open');
     showButtonAndResetTimer();
 });
